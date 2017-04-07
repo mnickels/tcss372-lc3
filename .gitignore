@@ -33,4 +33,4 @@
 *.su
 
 # Stack dump
-*.exe.stackdump
+*.stackdump
