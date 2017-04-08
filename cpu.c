@@ -11,15 +11,25 @@ int controller(CPU_p cpu) {
 			case FETCH: // microstates 18, 33, 35 in the book
                 printf("Here in FETCH\n");
                 // get memory[PC] into IR - memory is a global array
-                // increment PC
+    
+                
+                cpu->mar = cpu->pc;// PC TO MAR
+                cpu ->mdr = cpu->mar;// MAR TO MDR
+                cpu->ir.ir = cpu->mdr// MDR TO IR
+                        
+              // increment PC? what does this look like if we are only taking in one instruction.
+
+                        
                 printf("Contents of IR = %04X\n", cpu->ir);
-				//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                // put printf statements in each state and microstate to see that it is working
- 				//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+                
+	\
                state = DECODE;
                 break;
             case DECODE: // microstate 32
                 // get the fields out of the IR
+                parseIR(cou->ir);
+                
+                
                 // make sure opcode is in integer form
 				// hint: use four unsigned int variables, opcode, Rd, Rs, and immed7
 				// extract the bit fields from the IR into these variables
