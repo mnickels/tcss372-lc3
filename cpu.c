@@ -22,7 +22,7 @@ int controller(CPU_p cpu) {
                         
                 printf("Contents of IR = %04X\n", cpu->ir);
                 
-	\
+	
                state = DECODE;
                 break;
             case DECODE: // microstate 32
