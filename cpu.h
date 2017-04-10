@@ -28,7 +28,7 @@ typedef struct inst_reg {
 	unsigned short rd;
 	unsigned short rs1;
 	unsigned short rs2;
-	unsigned short immed6;  //Mike I couldnt find anything online to explain how to use those bit amount identifiers so i just removed them for now and will shift bits around to the front
+	unsigned short immed6;  //Mike I couldn't find anything online to explain how to use those bit amount identifiers so i just removed them for now and will shift bits around to the front
                                 //
 } INST_REG_s;
 
