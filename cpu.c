@@ -12,10 +12,10 @@ int controller(CPU_p cpu) {
                 printf("Here in FETCH\n");
                 // get memory[PC] into IR - memory is a global array
     
-                
+                cpu->pc = &memory[0];// should this be done in main?
                 cpu->mar = cpu->pc;// PC TO MAR
                 cpu ->mdr = cpu->mar;// MAR TO MDR
-                cpu->ir.ir = cpu->mdr// MDR TO IR
+                cpu->ir.ir = *cpu->mdr// MDR TO IR
                         
               // increment PC? what does this look like if we are only taking in one instruction.
 
