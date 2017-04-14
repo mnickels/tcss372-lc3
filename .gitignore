@@ -31,6 +31,9 @@
 # Debug files
 *.dSYM/
 *.su
+*.mk
+*.xml
+*.BASH
 
 # Stack dump
 a.exe.stackdump
