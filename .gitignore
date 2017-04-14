@@ -37,3 +37,6 @@
 
 # Stack dump
 a.exe.stackdump
+
+# Netbeans files
+p2
