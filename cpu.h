@@ -71,5 +71,6 @@ int controller(CPU_p cpu);
 int main(int argc, char* argv[]);
 unsigned short parseIR(INST_REG_s ir);
 unsigned short sext5(unsigned short immed5);
+unsigned short sext9(unsigned short immed9);
 
 #endif

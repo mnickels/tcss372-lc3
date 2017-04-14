@@ -2,8 +2,6 @@
 
 unsigned short memory[MEMORY_SIZE];
 
-
-
 int controller(CPU_p cpu) {
     
         unsigned int state;
@@ -14,32 +12,27 @@ int controller(CPU_p cpu) {
         
 
 	for (;;) {
-            switch (state) {
+        switch (state) {
             case FETCH: // microstates 18, 33, 35 in the book
                 printf("Here in FETCH\n");
                 // get memory[PC] into IR - memory is a global array
                 
-                cpu->pc = &memory[0];// should this be done in main?
-                
                 cpu->mar = cpu->pc;// PC TO MAR
                 
-                cpu ->mdr = *cpu->mar;// MAR TO MDR
+                cpu ->mdr = memory[cpu->mar];// MAR TO MDR
                 
-                cpu->ir.ir = cpu->mdr// MDR TO IR
-                    
-                        
-                        
-              // increment PC? what does this look like if we are only taking in one instruction.
+                cpu->ir.ir = cpu->mdr;// MDR TO IR
 
+                cpu->pc += 1;
                         
-                printf("contents of IR = %04X\n", cpu->ir);
+                printf("contents of IR = %04X\n", cpu->ir.ir);
                 
                 
                state = DECODE;
                 break;
             case DECODE: // microstate 32
                 
-                  // get the fields out of the IR
+                // get the fields out of the IR
                 parseIR(cpu->ir);
                 
                 if (cpu->alu.R == 0) {
@@ -146,7 +139,7 @@ int controller(CPU_p cpu) {
                             //= cpu->mdr; //    state 16
                             break;
                         case LD_OPCODE:
-                            -+//cpu->mdr = cpu->mar // state 25
+                            //cpu->mdr = cpu->mar // state 25
                             break;
                     // write back to register or store MDR into memory
                 }
@@ -154,14 +147,22 @@ int controller(CPU_p cpu) {
                 state = FETCH;
                 break;
 		}
+        int i;
+        for (i = 0; i < REGISTER_FILE_SIZE; i++) {
+            printf("R[%d]=%4X", i, cpu->reg_file[i]);
+        }
 	}
 }
 
 int main(int argc, char* argv[]) {
-	printf("test");
 	char* temp;
 	memory[0] = strtol(argv[1], &temp, 16);
 	printf("memory[0]: %4X = %d", memory[0], memory[0]);
+
+    CPU_p cpu = malloc(sizeof(CPU_s));
+    cpu->pc = 0;
+
+    controller(cpu);
 }
 
 unsigned short parseIR(INST_REG_s ir) {   
