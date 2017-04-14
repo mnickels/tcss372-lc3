@@ -54,8 +54,8 @@ typedef struct inst_reg {
 	unsigned short rs2;
 	unsigned short immed6;  // should this be 5?
                   unsigned short off9;
-        
-                   
+
+
 } INST_REG_s;
 
 typedef struct cpu_s {
@@ -70,6 +70,6 @@ typedef CPU_s* CPU_p;
 int controller(CPU_p cpu);
 int main(int argc, char* argv[]);
 unsigned short parseIR(INST_REG_s ir);
-nsigned short sext5(unsigned short immed5);
+unsigned short sext5(unsigned short immed5);
 
 #endif
