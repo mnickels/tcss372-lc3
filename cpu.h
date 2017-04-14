@@ -20,9 +20,13 @@
 #define BIT_2 0x4
 #define BIT_4 0x8
 #define BIT_5 0x10
+#define BIT_8 0x100
 
 #define SEXT_5 0x1F         // 0000 0000 0001 1111
 #define SEXT_5_MASK 0xFFE0  // 1111 1111 1110 0000
+
+#define SEXT_9 0x1FF         // 0000 0001 1111 1111
+#define SEXT_9_MASK 0xFE00  // 1111 1110 0000 0000
 
 #define ADD_OPCODE 0x1
 #define AND_OPCODE 0x5
@@ -48,7 +52,10 @@ typedef struct inst_reg {
 	unsigned short rd;
 	unsigned short rs1;
 	unsigned short rs2;
-	unsigned short immed6;  
+	unsigned short immed6;  // should this be 5?
+                  unsigned short off9;
+        
+                   
 } INST_REG_s;
 
 typedef struct cpu_s {
@@ -63,5 +70,6 @@ typedef CPU_s* CPU_p;
 int controller(CPU_p cpu);
 int main(int argc, char* argv[]);
 unsigned short parseIR(INST_REG_s ir);
+nsigned short sext5(unsigned short immed5);
 
 #endif
