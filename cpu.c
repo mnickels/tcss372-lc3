@@ -24,9 +24,8 @@ int controller(CPU_p cpu) {
                 cpu->ir.ir = cpu->mdr;// MDR TO IR
 
                 cpu->pc += 1;
-                        
-                printf("contents of IR = %04X\n", cpu->ir.ir);
                 
+                printf("contents of IR = %04X\n", cpu->ir.ir);
                 
                state = DECODE;
                 break;
@@ -63,7 +62,7 @@ int controller(CPU_p cpu) {
                     
                              case ST_OPCODE:
                              case LD_OPCODE:
-                                cpu->mar =  cpu->pc + sext9(cpu->ir.off9); // state 2,10,11
+                                cpu->mar =  cpu->pc + sext9(cpu->ir.off9); // state 2,3,10,11
                                    state = FETCH_OP;
                                    break;
                                    
@@ -74,7 +73,7 @@ int controller(CPU_p cpu) {
                                
                              case TRAP_OPCODE:
                                 //state 15
-                                   state = FETCH_OP;
+                              state = FETCH_OP;
                         break;
                 }           
                                
@@ -91,11 +90,15 @@ int controller(CPU_p cpu) {
                           cpu->alu.B = op2;
                           cpu->alu.A = cpu->ir.rs1;
                           break;
+                    case NOT_OPCODE:
+                        cpu->alu.A = cpu->ir.rs1;
+                        break;
+                         
                      case ST_OPCODE:
                          cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
                            break;
                      case LD_OPCODE:
-                    //     cpu->mdr = cpu->mar // state 25
+                        cpu->mdr = memory[cpu->mar] // state 25
                             break;
                             case TRAP_OPCODE:
                                 //state 28
@@ -109,12 +112,15 @@ int controller(CPU_p cpu) {
             case EXECUTE: // Note that ST does not have an execute microstate
                 switch (cpu->ir.opcode) {
                     
-                             case ADD_OPCODE:
+                            case ADD_OPCODE:
                                  cpu->alu.R = cpu->alu.A + cpu->alu.B; 
                                  break;
-                              case AND_OPCODE:
+                            case AND_OPCODE:
                                 cpu->alu.R = cpu->ir.rs1 & op2;
                                   break;
+                            case NOT_OPCODE:
+                               cpu->alu.R = ~cpu->alu.A;
+                                 break;
                                 case TRAP_OPCODE:
                                 //state 30
                         break;
@@ -136,11 +142,14 @@ int controller(CPU_p cpu) {
                             cpu->reg_file[cpu->ir.rd] = cpu->alu.R; 
                             break;
                         case ST_OPCODE:
-                            //= cpu->mdr; //    state 16
+                            memory[cpu->mar] =  cpu->mdr; //    state 16
                             break;
                         case LD_OPCODE:
-                            //cpu->mdr = cpu->mar // state 25
+                            cpu->reg_file[cpu->ir.rd] = cpu->mdr // state 27
                             break;
+                        case NOT_OPCODE:
+                            cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
+                        break;
                     // write back to register or store MDR into memory
                 }
                 // do any clean up here in prep for the next complete cycle
