@@ -167,9 +167,10 @@ int controller(CPU_p cpu) {
                 state = FETCH;
                 break;
 		}
+        printf("Contents of Register File:\n");
         int i;
         for (i = 0; i < REGISTER_FILE_SIZE; i++) {
-            printf("R[%d]=%4X", i, cpu->reg_file[i]);
+            printf("  R[%d]=%4X\n", i, cpu->reg_file[i]);
         }
 	}
 }
@@ -191,49 +192,35 @@ int main(int argc, char* argv[]) {
     controller(cpu);
 }
 
+/*
+ * Parses the ir.ir into the INST_REG_s struct's other fields as appropriate
+ * pre: ir.ir must contain the current IR value that needs to be parsed
+ * post: ir.opcode, ir.rd, ir.sr1, ir.sr2, ir.immed6, ir.off9, and ir.trapvector
+ *       will all be filled with the appropriate values from ir.ir
+ */
 unsigned short parseIR(INST_REG_s ir) {
-    unsigned short mask = 3584 ;//  0b0000 1110 0000 0000
-    unsigned short temp = 0; // to store masking result
-
-
-    ir.opcode = ir.ir >>12;
-
-    temp = mask & ir.ir;
-    ir.rd = temp >> 9;
-
-    mask = mask >> 3; // mask is 0b0000 0001 1100 0000
-    temp = mask & ir.ir;
-    ir.rs1 = temp >> 6;
-
-    mask = mask >> 3; // mask is 0b0000 0000 0011 1000
-    temp = mask & ir.ir;
-    ir.rs2 = temp >> 3;
-
-    mask =0x3F; //                0b0000 0000 0011 1111
-    ir.immed6 = mask & ir.ir;
-
-    mask = 0x1FF; //
-    ir.off9 = mask & ir.ir;
-
-     mask = 0xFF; //
-    ir.trapvector = mask & ir.ir;
-
-
-
+    ir.opcode = ir.ir >> OPCODE_SHIFT;
+    ir.rd = (ir.ir & RD_MASK) >> RD_SHIFT;
+    ir.rs1 = (ir.ir & RS1_MASK) >> RS1_SHIFT;
+    ir.rs2 = (ir.ir & RS2_MASK) >> RS2_SHIFT;
+    ir.immed6 = ir.ir & IMMED6_MASK;
+    ir.off9 = ir.ir & OFF9_MASK;
+    ir.trapvector = ir.ir & TRAPVECTOR_MASK;
 }
+
 unsigned short sext5(unsigned short immed5) {
     unsigned short sext;
-    sext = immed5 & IMMED_5_MASK;
+    sext = immed5 & IMMED5_MASK;
     if (immed5 & BIT_4) {
-        sext |= SEXT_5_MASK;
+        sext |= SEXT5_MASK;
     }
     return sext;
 }
 unsigned short sext9(unsigned short immed9) {
     unsigned short sext;
-    sext = immed9 & IMMED_9_MASK;
+    sext = immed9 & OFF9_MASK;
     if (immed9 & BIT_8) {
-        sext |= SEXT_9_MASK;
+        sext |= SEXT9_MASK;
     }
     return sext;
 }

@@ -22,21 +22,6 @@
 #define EXECUTE 4
 #define STORE 5
 
-// Single bit bitmasks (labeled as 'BIT_#', where the bit is in the 2^# place in binary representation)
-#define BIT_15 0x8000
-#define BIT_0 0x1
-#define BIT_1 0x2
-#define BIT_2 0x4
-#define BIT_4 0x8
-#define BIT_5 0x10
-#define BIT_8 0x100
-
-// Immediate value related bitmasks (include octets as binary in a comment)
-#define IMMED_5_MASK 0x1F   // 0000 0000 0001 1111
-#define SEXT_5_MASK 0xFFE0  // 1111 1111 1110 0000
-#define IMMED_9_MASK 0x1FF  // 0000 0001 1111 1111
-#define SEXT_9_MASK 0xFE00  // 1111 1110 0000 0000
-
 // Opcodes (sorted by value)
 #define BR_OPCODE 0x0
 #define ADD_OPCODE 0x1
@@ -46,6 +31,36 @@
 #define NOT_OPCODE 0x9
 #define JMP_OPCODE 0xC
 #define TRAP_OPCODE 0xF
+
+// Single bit bitmasks (labeled as 'BIT_#', where the bit is in the 2^# place in binary representation)
+#define BIT_0 0x1
+#define BIT_1 0x2
+#define BIT_2 0x4
+#define BIT_4 0x8
+#define BIT_5 0x20
+#define BIT_8 0x100
+#define BIT_15 0x8000
+
+// IR field bitshifts
+#define OPCODE_SHIFT 0xC	// >> 12
+#define RD_SHIFT 0x9		// >> 9
+#define RS1_SHIFT 0x6		// >> 6
+#define RS2_SHIFT 0x3		// >> 3
+
+// IR field bitmasks
+#define OPCODE_MASK 0xF000		// 1111 0000 0000 0000
+#define RD_MASK 0x0E00			// 0000 1110 0000 0000
+#define SR1_MASK 0x01C0			// 0000 0001 1100 0000
+#define SR2_MASK 0x0038			// 0000 0000 0011 1000
+#define IMMED6_MASK 0x003F		// 0000 0000 0011 1111
+#define OFF9_MASK 0x01FF		// 0000 0001 1111 1111
+#define TRAPVECTOR_MASK 0x00FF	// 0000 0000 1111 1111
+
+// Immediate value related bitmasks (include octets as binary in a comment)
+#define IMMED5_MASK 0x1F   // 0000 0000 0001 1111
+#define SEXT5_MASK 0xFFE0  // 1111 1111 1110 0000
+//#define OFF9_MASK 0x1FF  // 0000 0001 1111 1111	(already defined in IR field bitmasks)
+#define SEXT9_MASK 0xFE00  // 1111 1110 0000 0000
 
 // Other constants
 #define MEMORY_SIZE 32
@@ -68,9 +83,9 @@ typedef struct inst_reg {
 	unsigned short rd;
 	unsigned short rs1;
 	unsigned short rs2;
-	unsigned short immed6;  // should this be 5?
-                  unsigned short off9;
-                  unsigned short trapvector;
+	unsigned short immed6;
+	unsigned short off9;
+	unsigned short trapvector;
 
 
 } INST_REG_s;
