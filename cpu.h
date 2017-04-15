@@ -13,6 +13,8 @@
 // Standard C library includes
 #include <stdio.h>
 #include <stdlib.h>
+#include <termios.h>
+#include <unistd.h>
 
 // Microstates of the CPU
 #define FETCH 0
@@ -104,5 +106,6 @@ unsigned short parseIR(INST_REG_s ir);
 unsigned short sext5(unsigned short immed5);
 unsigned short sext9(unsigned short immed9);
 unsigned short zext(unsigned short trapvector);
+char getch();
 
 #endif
