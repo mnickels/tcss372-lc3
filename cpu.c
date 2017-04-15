@@ -72,7 +72,7 @@ int controller(CPU_p cpu) {
                                break;
                                
                              case TRAP_OPCODE:
-                                //state 15
+                               cpu->mar = zext(cpu->ir.trapvector); //state 15
                               state = FETCH_OP;
                         break;
                 }           
@@ -101,6 +101,8 @@ int controller(CPU_p cpu) {
                         cpu->mdr = memory[cpu->mar] // state 25
                             break;
                             case TRAP_OPCODE:
+                                cpu->mdr = memory[cpu->mar];
+                                cpu->reg_file[6] = cpu->pc; // pc to reg 7
                                 //state 28
                         break;
                       
@@ -122,6 +124,7 @@ int controller(CPU_p cpu) {
                                cpu->alu.R = ~cpu->alu.A;
                                  break;
                                 case TRAP_OPCODE:
+                                    cpu->pc = cpu->mdr;
                                 //state 30
                         break;
                                  
@@ -195,8 +198,13 @@ unsigned short parseIR(INST_REG_s ir) {
     mask =0x3F; //                0b0000 0000 0011 1111
     ir.immed6 = mask & ir.ir; 
     
-    mask = 0x1EE;
+    mask = 0x1FF; //
     ir.off9 = mask & ir.ir;
+    
+     mask = 0xFF; //
+    ir.trapvector = mask & ir.ir;
+    
+    
      
 }
 unsigned short sext5(unsigned short immed5) {
@@ -214,4 +222,7 @@ unsigned short sext9(unsigned short immed9) {
         sext |= SEXT_9_MASK;
     }
     return sext;
+}
+unsigned short zext(unsigned short trapvector) {
+    return trapvector;
 }

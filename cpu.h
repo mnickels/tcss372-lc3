@@ -54,6 +54,7 @@ typedef struct inst_reg {
 	unsigned short rs2;
 	unsigned short immed6;  // should this be 5?
                   unsigned short off9;
+                  unsigned short trapvector;
 
 
 } INST_REG_s;
