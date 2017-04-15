@@ -182,6 +182,12 @@ int main(int argc, char* argv[]) {
     CPU_p cpu = malloc(sizeof(CPU_s));
     cpu->pc = 0;
 
+    // initialize registers with data for testing
+    cpu->reg_file[0] = 0xF;
+    cpu->reg_file[1] = 0x1D;
+    cpu->reg_file[2] = 0x0;
+    cpu->reg_file[3] = 0xAA;
+
     controller(cpu);
 }
 
