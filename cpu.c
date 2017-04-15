@@ -133,7 +133,7 @@ int controller(CPU_p cpu) {
                         //state 30
                         break;
                     case JMP_OPCODE:
-                        cpu->pc = cpu->rs1;
+                        cpu->pc = cpu->ir.rs1;
                         break;
                     case BR_OPCODE:
                         if (ben) {
