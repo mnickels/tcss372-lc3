@@ -45,21 +45,18 @@
 #define OPCODE_SHIFT 0xC	// >> 12
 #define RD_SHIFT 0x9		// >> 9
 #define RS1_SHIFT 0x6		// >> 6
-#define RS2_SHIFT 0x3		// >> 3
 
 // IR field bitmasks
 #define OPCODE_MASK 0xF000		// 1111 0000 0000 0000
 #define RD_MASK 0x0E00			// 0000 1110 0000 0000
 #define RS1_MASK 0x01C0			// 0000 0001 1100 0000
-#define RS2_MASK 0x0038			// 0000 0000 0011 1000
-#define IMMED6_MASK 0x003F		// 0000 0000 0011 1111
+#define RS2_MASK 0x0007			// 0000 0000 0000 0111
+#define IMMED5_MASK 0x001F		// 0000 0000 0011 1111
 #define OFF9_MASK 0x01FF		// 0000 0001 1111 1111
 #define TRAPVECTOR_MASK 0x00FF	// 0000 0000 1111 1111
 
-// Immediate value related bitmasks (include octets as binary in a comment)
-#define IMMED5_MASK 0x1F   // 0000 0000 0001 1111
+// sext/zext bitmasks (include octets as binary in a comment)
 #define SEXT5_MASK 0xFFE0  // 1111 1111 1110 0000
-//#define OFF9_MASK 0x1FF  // 0000 0001 1111 1111	(already defined in IR field bitmasks)
 #define SEXT9_MASK 0xFE00  // 1111 1110 0000 0000
 
 // Other constants
@@ -83,7 +80,7 @@ typedef struct inst_reg {
 	unsigned short rd;
 	unsigned short rs1;
 	unsigned short rs2;
-	unsigned short immed6;
+	unsigned short immed5;
 	unsigned short off9;
 	unsigned short trapvector;
 

@@ -22,7 +22,7 @@ int controller(CPU_p cpu) {
 	for (;;) {
         switch (state) {
             case FETCH: // microstates 18, 33, 35 in the book
-                printf("FETCH\n");
+                printf("\nFETCH\n");
 
                 cpu->mar = cpu->pc;
                 cpu->pc += 1;
@@ -31,10 +31,11 @@ int controller(CPU_p cpu) {
 
                 cpu->ir.ir = cpu->mdr;
 
-                printf("  contents of IR = %04X\n", cpu->ir.ir);
+                printf("  IR=%04X\n", cpu->ir.ir);
                 state = DECODE;
                 break;
             case DECODE: // microstate 32
+                printf("\nDECODE\n");
 
                 // get the fields out of the IR
                 parseIR(cpu->ir);
@@ -50,8 +51,8 @@ int controller(CPU_p cpu) {
                 switch (cpu->ir.opcode) {
                     case AND_OPCODE:
                     case ADD_OPCODE:
-                        if (cpu->ir.immed6 & BIT_5) {
-                            op2 = sext5(cpu->ir.immed6);
+                        if (cpu->ir.ir & BIT_5) {
+                            op2 = sext5(cpu->ir.immed5);
                         } else {
                             op2 = cpu->ir.rs2;
                         }
@@ -61,6 +62,7 @@ int controller(CPU_p cpu) {
                 state = EVAL_ADDR;
                 break;
             case EVAL_ADDR: // Look at the LD instruction to see microstate 2 example
+                printf("\nEVALUATE ADDRESS\n");
 
                 switch (cpu->ir.opcode) {
                     case ST_OPCODE:
@@ -83,6 +85,8 @@ int controller(CPU_p cpu) {
                 state = FETCH_OP;
                 break;
             case FETCH_OP: // Look at ST. Microstate 23   example of getting a value out of a register
+                printf("\nFETCH OPERANDS\n");
+
                 switch (cpu->ir.opcode) {
                     case ADD_OPCODE:
                     case AND_OPCODE:
@@ -112,6 +116,7 @@ int controller(CPU_p cpu) {
                 state = EXECUTE;
                 break;
             case EXECUTE: // Note that ST does not have an execute microstate
+                printf("\nEXECUTE\n");
                 switch (cpu->ir.opcode) {
 
                             case ADD_OPCODE:
@@ -136,6 +141,7 @@ int controller(CPU_p cpu) {
                 state = STORE;
                 break;
             case STORE: // Look at ST. Microstate 16        and37?i s the store to memory
+                printf("\nSTORE\n");
                 switch (cpu->ir.opcode) {
 
                         case AND_OPCODE:
@@ -159,7 +165,7 @@ int controller(CPU_p cpu) {
                 state = FETCH;
                 break;
 		}
-        printf("Contents of Register File:\n");
+        printf("\nRegister File:\n");
         int i;
         for (i = 0; i < REGISTER_FILE_SIZE; i++) {
             printf("  R[%d]=%4X\n", i, cpu->reg_file[i]);
@@ -170,7 +176,7 @@ int controller(CPU_p cpu) {
 int main(int argc, char* argv[]) {
 	char* temp;
 	memory[0] = strtol(argv[1], &temp, 16);
-	printf("memory[0]: %4X = %d", memory[0], memory[0]);
+	printf("memory[0]: %4X=%d", memory[0], memory[0]);
 
     CPU_p cpu = malloc(sizeof(CPU_s));
     cpu->pc = 0;
@@ -187,15 +193,15 @@ int main(int argc, char* argv[]) {
 /*
  * Parses the ir.ir into the INST_REG_s struct's other fields as appropriate
  * pre: ir.ir must contain the current IR value that needs to be parsed
- * post: ir.opcode, ir.rd, ir.sr1, ir.sr2, ir.immed6, ir.off9, and ir.trapvector
+ * post: ir.opcode, ir.rd, ir.sr1, ir.sr2, ir.immed5, ir.off9, and ir.trapvector
  *       will all be filled with the appropriate values from ir.ir
  */
 unsigned short parseIR(INST_REG_s ir) {
     ir.opcode = ir.ir >> OPCODE_SHIFT;
     ir.rd = (ir.ir & RD_MASK) >> RD_SHIFT;
     ir.rs1 = (ir.ir & RS1_MASK) >> RS1_SHIFT;
-    ir.rs2 = (ir.ir & RS2_MASK) >> RS2_SHIFT;
-    ir.immed6 = ir.ir & IMMED6_MASK;
+    ir.rs2 = ir.ir & RS2_MASK;
+    ir.immed5 = ir.ir & IMMED5_MASK;
     ir.off9 = ir.ir & OFF9_MASK;
     ir.trapvector = ir.ir & TRAPVECTOR_MASK;
 }
