@@ -98,7 +98,7 @@ int controller(CPU_p cpu) {
                          cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
                            break;
                      case LD_OPCODE:
-                        cpu->mdr = memory[cpu->mar] // state 25
+                        cpu->mdr = memory[cpu->mar]; // state 25
                             break;
                             case TRAP_OPCODE:
                                 cpu->mdr = memory[cpu->mar];
@@ -148,7 +148,7 @@ int controller(CPU_p cpu) {
                             memory[cpu->mar] =  cpu->mdr; //    state 16
                             break;
                         case LD_OPCODE:
-                            cpu->reg_file[cpu->ir.rd] = cpu->mdr // state 27
+                            cpu->reg_file[cpu->ir.rd] = cpu->mdr; // state 27
                             break;
                         case NOT_OPCODE:
                             cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
