@@ -1,15 +1,23 @@
+/*
+ * for TCSS 372 Spring 2017
+ *
+ * by Mike Nickels and Carter
+ *
+ * cpu.c
+ * Simulates an LC-3 CPU.
+ */
+
 #include "cpu.h"
 
 unsigned short memory[MEMORY_SIZE];
 
 int controller(CPU_p cpu) {
 
-        unsigned int state;
-        unsigned int ben, op2;
-        ben = 0;
-        op2 = 0;
-        state = FETCH;
-
+    unsigned int state;
+    unsigned int ben, op2;
+    ben = 0;
+    op2 = 0;
+    state = FETCH;
 
 	for (;;) {
         switch (state) {

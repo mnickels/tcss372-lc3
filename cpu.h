@@ -1,3 +1,12 @@
+/*
+ * for TCSS 372 Spring 2017
+ *
+ * by Mike Nickels and Carter
+ *
+ * cpu.h
+ * Header file for cpu.c
+ */
+
 #ifndef CPU_HEADER
 #define CPU_HEADER
 
