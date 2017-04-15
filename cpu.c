@@ -22,20 +22,17 @@ int controller(CPU_p cpu) {
 	for (;;) {
         switch (state) {
             case FETCH: // microstates 18, 33, 35 in the book
-                printf("Here in FETCH\n");
-                // get memory[PC] into IR - memory is a global array
+                printf("FETCH\n");
 
-                cpu->mar = cpu->pc;// PC TO MAR
-
-                cpu ->mdr = memory[cpu->mar];// MAR TO MDR
-
-                cpu->ir.ir = cpu->mdr;// MDR TO IR
-
+                cpu->mar = cpu->pc;
                 cpu->pc += 1;
 
-                printf("contents of IR = %04X\n", cpu->ir.ir);
+                cpu ->mdr = memory[cpu->mar];
 
-               state = DECODE;
+                cpu->ir.ir = cpu->mdr;
+
+                printf("  contents of IR = %04X\n", cpu->ir.ir);
+                state = DECODE;
                 break;
             case DECODE: // microstate 32
 
@@ -61,62 +58,57 @@ int controller(CPU_p cpu) {
                         break;
                 }
 
-
                 state = EVAL_ADDR;
                 break;
             case EVAL_ADDR: // Look at the LD instruction to see microstate 2 example
 
                 switch (cpu->ir.opcode) {
+                    case ST_OPCODE:
+                    case LD_OPCODE:
+                        cpu->mar =  cpu->pc + sext9(cpu->ir.off9); // state 2,3,10,11
+                        break;
 
-                             case ST_OPCODE:
-                             case LD_OPCODE:
-                                cpu->mar =  cpu->pc + sext9(cpu->ir.off9); // state 2,3,10,11
-                                   state = FETCH_OP;
-                                   break;
+                    case BR_OPCODE:
+                        cpu->pc =  cpu->pc + sext9(cpu->ir.off9); // state 22
+                        break;
 
-                            case BR_OPCODE:
-                               cpu->pc =  cpu->pc + sext9(cpu->ir.off9); // state 22
-                               state = FETCH; // need to go back to fetch
-                               break;
-
-                             case TRAP_OPCODE:
-                               cpu->mar = zext(cpu->ir.trapvector); //state 15
-                              state = FETCH_OP;
+                    case TRAP_OPCODE:
+                        cpu->mar = zext(cpu->ir.trapvector); //state 15
                         break;
                 }
 
                 // different opcodes require different handling
                 // compute effective address, e.g. add sext(immed7) to register
 
-              //  state = FETCH_OP;
+                state = FETCH_OP;
                 break;
             case FETCH_OP: // Look at ST. Microstate 23   example of getting a value out of a register
                 switch (cpu->ir.opcode) {
-
-                      case ADD_OPCODE:
-                      case AND_OPCODE:
-                          cpu->alu.B = op2;
-                          cpu->alu.A = cpu->ir.rs1;
-                          break;
+                    case ADD_OPCODE:
+                    case AND_OPCODE:
+                        cpu->alu.B = op2;
+                        cpu->alu.A = cpu->ir.rs1;
+                        break;
                     case NOT_OPCODE:
                         cpu->alu.A = cpu->ir.rs1;
                         break;
 
-                     case ST_OPCODE:
-                         cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
-                           break;
-                     case LD_OPCODE:
+                    case ST_OPCODE:
+                        cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
+                        break;
+                    case LD_OPCODE:
                         cpu->mdr = memory[cpu->mar]; // state 25
-                            break;
-                            case TRAP_OPCODE:
-                                cpu->mdr = memory[cpu->mar];
-                                cpu->reg_file[6] = cpu->pc; // pc to reg 7
-                                //state 28
+                        break;
+                        case TRAP_OPCODE:
+                            cpu->mdr = memory[cpu->mar];
+                            cpu->reg_file[6] = cpu->pc; // pc to reg 7
+                            //state 28
                         break;
 
                     // get operands out of registers into A, B of ALU
                     // or get memory for load instr.
                 }
+
                 state = EXECUTE;
                 break;
             case EXECUTE: // Note that ST does not have an execute microstate

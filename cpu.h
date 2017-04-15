@@ -32,7 +32,7 @@
 #define JMP_OPCODE 0xC
 #define TRAP_OPCODE 0xF
 
-// Single bit bitmasks (labeled as 'BIT_#', where the bit is in the 2^# place in binary representation)
+// Single bit bitmasks (labeled as 'BIT_#', where the bit is in the 2^# place in binary representation) (add in order as needed)
 #define BIT_0 0x1
 #define BIT_1 0x2
 #define BIT_2 0x4
@@ -50,8 +50,8 @@
 // IR field bitmasks
 #define OPCODE_MASK 0xF000		// 1111 0000 0000 0000
 #define RD_MASK 0x0E00			// 0000 1110 0000 0000
-#define SR1_MASK 0x01C0			// 0000 0001 1100 0000
-#define SR2_MASK 0x0038			// 0000 0000 0011 1000
+#define RS1_MASK 0x01C0			// 0000 0001 1100 0000
+#define RS2_MASK 0x0038			// 0000 0000 0011 1000
 #define IMMED6_MASK 0x003F		// 0000 0000 0011 1111
 #define OFF9_MASK 0x01FF		// 0000 0001 1111 1111
 #define TRAPVECTOR_MASK 0x00FF	// 0000 0000 1111 1111
