@@ -22,10 +22,10 @@
 #define BIT_5 0x10
 #define BIT_8 0x100
 
-#define SEXT_5 0x1F         // 0000 0000 0001 1111
+#define IMMED_5_MASK 0x1F   // 0000 0000 0001 1111
 #define SEXT_5_MASK 0xFFE0  // 1111 1111 1110 0000
 
-#define SEXT_9 0x1FF         // 0000 0001 1111 1111
+#define IMMED_9_MASK 0x1FF  // 0000 0001 1111 1111
 #define SEXT_9_MASK 0xFE00  // 1111 1110 0000 0000
 
 #define ADD_OPCODE 0x1
