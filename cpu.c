@@ -192,7 +192,6 @@ int main(int argc, char* argv[]) {
     }
 
 	memory[0] = strtol(argv[1], &temp, 16);
-	printf("memory[0]: %4X=%d", memory[0], memory[0]);
 
     CPU_p cpu = malloc(sizeof(CPU_s));
     cpu->pc = 0;
