@@ -178,11 +178,19 @@ int controller(CPU_p cpu) {
         for (i = 0; i < REGISTER_FILE_SIZE; i++) {
             printf("  R[%d]=%4X\n", i, cpu->reg_file[i]);
         }
+        printf("\nExecution paused, press any key to continue...\n");
+        getc();
 	}
 }
 
 int main(int argc, char* argv[]) {
 	char* temp;
+
+    if (argc != 2) {
+        printf("Invalid number of command line arguments. Exiting program.\n");
+        return 1;
+    }
+
 	memory[0] = strtol(argv[1], &temp, 16);
 	printf("memory[0]: %4X=%d", memory[0], memory[0]);
 
