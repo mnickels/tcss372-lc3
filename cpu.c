@@ -62,10 +62,6 @@ int controller(CPU_p cpu) {
                 }
                 printf("  Branch ENabled = %d\n", ben);
 
-                switch (cpu->ir.opcode) {
-
-                }
-
                 state = EVAL_ADDR;
                 break;
 
@@ -81,6 +77,7 @@ int controller(CPU_p cpu) {
                         cpu->mar = zext(cpu->ir.trapvector); //state 15
                         break;
                 }
+                printf("  MAR = x%X\n", cpu->mar);
 
                 // different opcodes require different handling
                 // compute effective address, e.g. add sext(immed7) to register
@@ -95,23 +92,23 @@ int controller(CPU_p cpu) {
                     case ADD_OPCODE:
                     case AND_OPCODE:
                         if (cpu->ir.ir & BIT_5) {
-                            printf("  OP2 <- immed5\n");
                             op2 = sext5(cpu->ir.immed5);
+                            printf("  OP2 <- SEXT(immed5) = x%X\n", cpu->ir.immed5);
                         } else {
-                            printf("  OP2 <- R[SR2]\n");
                             op2 = cpu->reg_file[cpu->ir.rs2];
+                            printf("  OP2 <- R[SR2] = R%d = x%X\n", cpu->ir.rs2, op2);
                         }
                         printf("    OP2: x%X = %d\n", op2, op2);
 
                         printf("  ALU Registers:\n");
-                        cpu->alu.A = cpu->ir.rs1;
-                        printf("    A = x%X\n", cpu->alu.A);
+                        cpu->alu.A = cpu->reg_file[cpu->ir.rs1];
+                        printf("    A = R%d = x%X\n", cpu->ir.rs1, cpu->alu.A);
                         cpu->alu.B = op2;
-                        printf("    ALU Reg B = x%X\n", cpu->alu.B);
+                        printf("    B = OP2 = x%X\n", cpu->alu.B);
                         break;
                     case NOT_OPCODE:
-                        cpu->alu.A = cpu->ir.rs1;
-                        printf("  ALU Reg A = x%X\n", cpu->alu.A);
+                        cpu->alu.A = cpu->reg_file[cpu->ir.rs1];
+                        printf("  ALU Reg A = R%d = x%X\n", cpu->ir.rs1, cpu->alu.A);
                         break;
                     case ST_OPCODE:
                         cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
@@ -125,7 +122,7 @@ int controller(CPU_p cpu) {
                         cpu->mdr = memory[cpu->mar];
                         printf("  MDR = x%X\n", cpu->mdr);
                         cpu->reg_file[7] = cpu->pc; // pc to reg 7
-                        printf("  R7 <- PC=x%X\n", cpu->pc);
+                        printf("  R7 <- PC = x%X\n", cpu->pc);
                         //state 28
                     break;
 
@@ -145,7 +142,7 @@ int controller(CPU_p cpu) {
                         printf("  x%X + x%X = x%X    (%d + %d = %d)", cpu->alu.A, cpu->alu.B, cpu->alu.R, cpu->alu.A, cpu->alu.B, cpu->alu.R);
                         break;
                     case AND_OPCODE:
-                        cpu->alu.R = cpu->ir.rs1 & op2;
+                        cpu->alu.R = cpu->alu.A & cpu->alu.B;
                         printf("  x%X & x%X = x%X    (%d & %d = %d)", cpu->alu.A, cpu->alu.B, cpu->alu.R, cpu->alu.A, cpu->alu.B, cpu->alu.R);
                         break;
                     case NOT_OPCODE:
@@ -181,19 +178,19 @@ int controller(CPU_p cpu) {
                     case AND_OPCODE:
                     case ADD_OPCODE:
                         cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
-                        printf("  R%d <- x%X", cpu->ir.rd, cpu->alu.R);
+                        printf("  R%d <- x%X\n", cpu->ir.rd, cpu->alu.R);
                         break;
                     case ST_OPCODE:
                         memory[cpu->mar] =  cpu->mdr; //    state 16
-                        printf("  M[%d] <- x%X", cpu->mar, memory[cpu->mar]);
+                        printf("  M[%d] <- x%X\n", cpu->mar, memory[cpu->mar]);
                         break;
                     case LD_OPCODE:
                         cpu->reg_file[cpu->ir.rd] = cpu->mdr; // state 27
-                        printf("  R%d <- x%X", cpu->ir.rd, cpu->reg_file[cpu->ir.rd]);
+                        printf("  R%d <- x%X\n", cpu->ir.rd, cpu->reg_file[cpu->ir.rd]);
                         break;
                     case NOT_OPCODE:
                         cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
-                        printf("  R%d <- x%X", cpu->ir.rd, cpu->reg_file[cpu->ir.rd]);
+                        printf("  R%d <- x%X\n", cpu->ir.rd, cpu->reg_file[cpu->ir.rd]);
                         break;
                     // write back to register or store MDR into memory
                 }
@@ -202,17 +199,17 @@ int controller(CPU_p cpu) {
                 printf("\nRegister File:\n");
                 int i;
                 for (i = 0; i < REGISTER_FILE_SIZE; i++) {
-                    printf("  R[%d] = x%4X\n", i, cpu->reg_file[i]);
+                    printf("  R%d = x%X\n", i, cpu->reg_file[i]);
                 }
 
                 printf("Memory[0:7]:\n");
                 for (i = 0; i < 8; i++) {
-                    printf("  M[%d] = x%4X\n", i, memory[i]);
+                    printf("  M[%d] = x%X\n", i, memory[i]);
                 }
 
-                printf("IR: x%4X\n", cpu->ir.ir);
+                printf("IR: x%X\n", cpu->ir.ir);
 
-                printf("PC: x%4X = %d\n", cpu->pc, cpu->pc);
+                printf("PC: x%X = %d\n", cpu->pc, cpu->pc);
 
                 return 0;
 
@@ -232,6 +229,9 @@ int main(int argc, char* argv[]) {
     }
 
 	memory[0] = strtol(argv[1], &temp, 16);
+    // trap vectors dummy values
+    memory[0x10] = 0xF0F0;
+    memory[0x15] = 0x0F0F;
 
     CPU_p cpu = malloc(sizeof(CPU_s));
     cpu->pc = 0;
