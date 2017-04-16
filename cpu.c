@@ -26,13 +26,16 @@ int controller(CPU_p cpu) {
                 printf("\nFETCH\n");
 
                 cpu->mar = cpu->pc;
+                printf("  MAR <- x%X\n", cpu->mar);
                 cpu->pc += 1;
+                printf("  PC  <- x%X\n", cpu->pc);
 
                 cpu ->mdr = memory[cpu->mar];
+                printf("  MDR <- x%X\n", cpu->mdr);
 
                 cpu->ir.ir = cpu->mdr;
+                printf("  IR  <- x%X\n", cpu->ir.ir);
 
-                printf("  IR=%04X\n", cpu->ir.ir);
                 state = DECODE;
                 break;
 
@@ -40,7 +43,15 @@ int controller(CPU_p cpu) {
                 printf("\nDECODE\n");
 
                 // get the fields out of the IR
-                parseIR(cpu->ir);
+                parseIR(&(cpu->ir));
+                printf("  IR fields:\n");
+                printf("    opcode = x%X\n", cpu->ir.opcode);
+                printf("    DR = x%X\n", cpu->ir.rd);
+                printf("    SR1 = x%X\n", cpu->ir.rs1);
+                printf("    SR2 = x%X\n", cpu->ir.rs2);
+                printf("    immed5 = x%X\n", cpu->ir.immed5);
+                printf("    PCoffset9 = x%X\n", cpu->ir.off9);
+                printf("    trapvect8 = x%X\n", cpu->ir.trapvector);
 
                 if (cpu->alu.R == 0) {
                     ben |= (BIT_1 & (cpu->ir.rd & BIT_1)) >> 1;
@@ -49,16 +60,10 @@ int controller(CPU_p cpu) {
                 } else {
                     ben |= (BIT_2 & (cpu->ir.rd & BIT_2)) >> 2;
                 }
+                printf("  Branch ENabled = %d\n", ben);
 
                 switch (cpu->ir.opcode) {
-                    case AND_OPCODE:
-                    case ADD_OPCODE:
-                        if (cpu->ir.ir & BIT_5) {
-                            op2 = sext5(cpu->ir.immed5);
-                        } else {
-                            op2 = cpu->ir.rs2;
-                        }
-                        break;
+
                 }
 
                 state = EVAL_ADDR;
@@ -89,22 +94,38 @@ int controller(CPU_p cpu) {
                 switch (cpu->ir.opcode) {
                     case ADD_OPCODE:
                     case AND_OPCODE:
-                        cpu->alu.B = op2;
+                        if (cpu->ir.ir & BIT_5) {
+                            printf("  OP2 <- immed5\n");
+                            op2 = sext5(cpu->ir.immed5);
+                        } else {
+                            printf("  OP2 <- R[SR2]\n");
+                            op2 = cpu->reg_file[cpu->ir.rs2];
+                        }
+                        printf("    OP2: x%X = %d\n", op2, op2);
+
+                        printf("  ALU Registers:\n");
                         cpu->alu.A = cpu->ir.rs1;
+                        printf("    A = x%X\n", cpu->alu.A);
+                        cpu->alu.B = op2;
+                        printf("    ALU Reg B = x%X\n", cpu->alu.B);
                         break;
                     case NOT_OPCODE:
                         cpu->alu.A = cpu->ir.rs1;
+                        printf("  ALU Reg A = x%X\n", cpu->alu.A);
                         break;
-
                     case ST_OPCODE:
                         cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
+                        printf("  MDR = x%X\n", cpu->mdr);
                         break;
                     case LD_OPCODE:
                         cpu->mdr = memory[cpu->mar]; // state 25
+                        printf("  MDR = x%X\n", cpu->mdr);
                         break;
                     case TRAP_OPCODE:
                         cpu->mdr = memory[cpu->mar];
+                        printf("  MDR = x%X\n", cpu->mdr);
                         cpu->reg_file[7] = cpu->pc; // pc to reg 7
+                        printf("  R7 <- PC=x%X\n", cpu->pc);
                         //state 28
                     break;
 
@@ -121,23 +142,30 @@ int controller(CPU_p cpu) {
 
                     case ADD_OPCODE:
                         cpu->alu.R = cpu->alu.A + cpu->alu.B;
+                        printf("  x%X + x%X = x%X    (%d + %d = %d)", cpu->alu.A, cpu->alu.B, cpu->alu.R, cpu->alu.A, cpu->alu.B, cpu->alu.R);
                         break;
                     case AND_OPCODE:
                         cpu->alu.R = cpu->ir.rs1 & op2;
+                        printf("  x%X & x%X = x%X    (%d & %d = %d)", cpu->alu.A, cpu->alu.B, cpu->alu.R, cpu->alu.A, cpu->alu.B, cpu->alu.R);
                         break;
                     case NOT_OPCODE:
                         cpu->alu.R = ~cpu->alu.A;
+                        printf("  NOT x%X = x%X    (NOT %d = %d)", cpu->alu.A, cpu->alu.R, cpu->alu.A, cpu->alu.R);
                         break;
                     case TRAP_OPCODE:
                         cpu->pc = cpu->mdr;
+                        printf("  PC <- x%X", cpu->pc);
                         //state 30
                         break;
                     case JMP_OPCODE:
                         cpu->pc = cpu->ir.rs1;
+                        printf("  PC <- x%X", cpu->pc);
                         break;
                     case BR_OPCODE:
+                    printf("BEN: %d", ben);
                         if (ben) {
                             cpu->pc = cpu->pc + sext9(cpu->ir.off9); // state 22
+                            printf("  PC <- x%X", cpu->pc);
                         }
                         break;
                     // do what the opcode is for, e.g. ADD
@@ -151,35 +179,47 @@ int controller(CPU_p cpu) {
                 printf("\nSTORE\n");
                 switch (cpu->ir.opcode) {
                     case AND_OPCODE:
-                        cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
-                        break;
                     case ADD_OPCODE:
                         cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
+                        printf("  R%d <- x%X", cpu->ir.rd, cpu->alu.R);
                         break;
                     case ST_OPCODE:
                         memory[cpu->mar] =  cpu->mdr; //    state 16
+                        printf("  M[%d] <- x%X", cpu->mar, memory[cpu->mar]);
                         break;
                     case LD_OPCODE:
                         cpu->reg_file[cpu->ir.rd] = cpu->mdr; // state 27
+                        printf("  R%d <- x%X", cpu->ir.rd, cpu->reg_file[cpu->ir.rd]);
                         break;
                     case NOT_OPCODE:
                         cpu->reg_file[cpu->ir.rd] = cpu->alu.R;
+                        printf("  R%d <- x%X", cpu->ir.rd, cpu->reg_file[cpu->ir.rd]);
                         break;
                     // write back to register or store MDR into memory
                 }
 
                 // do any clean up here in prep for the next complete cycle
+                printf("\nRegister File:\n");
+                int i;
+                for (i = 0; i < REGISTER_FILE_SIZE; i++) {
+                    printf("  R[%d] = x%4X\n", i, cpu->reg_file[i]);
+                }
+
+                printf("Memory[0:7]:\n");
+                for (i = 0; i < 8; i++) {
+                    printf("  M[%d] = x%4X\n", i, memory[i]);
+                }
+
+                printf("IR: x%4X\n", cpu->ir.ir);
+
+                printf("PC: x%4X = %d\n", cpu->pc, cpu->pc);
+
+                return 0;
+
                 state = FETCH;
                 break;
 
 		}
-        printf("\nRegister File:\n");
-        int i;
-        for (i = 0; i < REGISTER_FILE_SIZE; i++) {
-            printf("  R[%d]=%4X\n", i, cpu->reg_file[i]);
-        }
-        printf("\nExecution paused, press any key to continue...\n");
-        getch();
 	}
 }
 
@@ -206,42 +246,19 @@ int main(int argc, char* argv[]) {
 }
 
 /*
- * Getting a character input without requiring the user to hit enter afterwards
- */
-char getch() {
-        char buf = 0;
-        struct termios old = {0};
-        if (tcgetattr(0, &old) < 0)
-                perror("tcsetattr()");
-        old.c_lflag &= ~ICANON;
-        old.c_lflag &= ~ECHO;
-        old.c_cc[VMIN] = 1;
-        old.c_cc[VTIME] = 0;
-        if (tcsetattr(0, TCSANOW, &old) < 0)
-                perror("tcsetattr ICANON");
-        if (read(0, &buf, 1) < 0)
-                perror ("read()");
-        old.c_lflag |= ICANON;
-        old.c_lflag |= ECHO;
-        if (tcsetattr(0, TCSADRAIN, &old) < 0)
-                perror ("tcsetattr ~ICANON");
-        return (buf);
-}
-
-/*
  * Parses the ir.ir into the INST_REG_s struct's other fields as appropriate
  * pre: ir.ir must contain the current IR value that needs to be parsed
  * post: ir.opcode, ir.rd, ir.sr1, ir.sr2, ir.immed5, ir.off9, and ir.trapvector
  *       will all be filled with the appropriate values from ir.ir
  */
-unsigned short parseIR(INST_REG_s ir) {
-    ir.opcode = ir.ir >> OPCODE_SHIFT;
-    ir.rd = (ir.ir & RD_MASK) >> RD_SHIFT;
-    ir.rs1 = (ir.ir & RS1_MASK) >> RS1_SHIFT;
-    ir.rs2 = ir.ir & RS2_MASK;
-    ir.immed5 = ir.ir & IMMED5_MASK;
-    ir.off9 = ir.ir & OFF9_MASK;
-    ir.trapvector = ir.ir & TRAPVECTOR_MASK;
+unsigned short parseIR(INST_REG_s* ir) {
+    ir->opcode = ir->ir >> OPCODE_SHIFT;
+    ir->rd = (ir->ir & RD_MASK) >> RD_SHIFT;
+    ir->rs1 = (ir->ir & RS1_MASK) >> RS1_SHIFT;
+    ir->rs2 = ir->ir & RS2_MASK;
+    ir->immed5 = ir->ir & IMMED5_MASK;
+    ir->off9 = ir->ir & OFF9_MASK;
+    ir->trapvector = ir->ir & TRAPVECTOR_MASK;
 }
 
 unsigned short sext5(unsigned short immed5) {
