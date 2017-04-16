@@ -45,7 +45,17 @@ int controller(CPU_p cpu) {
                 // get the fields out of the IR
                 parseIR(&(cpu->ir));
                 printf("  IR fields:\n");
-                printf("    opcode = x%X\n", cpu->ir.opcode);
+                printf("    opcode = x%X ", cpu->ir.opcode);
+                switch (cpu->ir.opcode) {
+                    case BR_OPCODE: printf("(BR)\n"); break;
+                    case ADD_OPCODE: printf("(ADD)\n"); break;
+                    case LD_OPCODE: printf("(LD)\n"); break;
+                    case ST_OPCODE: printf("(ST)\n"); break;
+                    case AND_OPCODE: printf("(AND)\n"); break;
+                    case NOT_OPCODE: printf("(NOT)\n"); break;
+                    case JMP_OPCODE: printf("(JMP)\n"); break;
+                    case TRAP_OPCODE: printf("(TRAP)\n"); break;
+                }
                 printf("    DR = x%X\n", cpu->ir.rd);
                 printf("    SR1 = x%X\n", cpu->ir.rs1);
                 printf("    SR2 = x%X\n", cpu->ir.rs2);
@@ -72,12 +82,17 @@ int controller(CPU_p cpu) {
                     case ST_OPCODE:
                     case LD_OPCODE:
                         cpu->mar =  cpu->pc + sext9(cpu->ir.off9); // state 2,3,10,11
+                        printf("  MAR <- PC + SEXT(PCoffset9) = x%X\n", cpu->mar);
                         break;
                     case TRAP_OPCODE:
                         cpu->mar = zext(cpu->ir.trapvector); //state 15
+                        printf("  MAR <- ZEXT(trapvect8) = x%X\n", cpu->mar);
+                        break;
+                    case JMP_OPCODE:
+                        cpu->mar = cpu->reg_file[cpu->ir.rs1];
+                        printf("  MAR <- R%d = x%X\n", cpu->ir.rs1, cpu->mar);
                         break;
                 }
-                printf("  MAR = x%X\n", cpu->mar);
 
                 // different opcodes require different handling
                 // compute effective address, e.g. add sext(immed7) to register
@@ -93,34 +108,34 @@ int controller(CPU_p cpu) {
                     case AND_OPCODE:
                         if (cpu->ir.ir & BIT_5) {
                             op2 = sext5(cpu->ir.immed5);
-                            printf("  OP2 <- SEXT(immed5) = x%X\n", cpu->ir.immed5);
+                            printf("  OP2 <- SEXT(immed5)\n");
                         } else {
                             op2 = cpu->reg_file[cpu->ir.rs2];
-                            printf("  OP2 <- R[SR2] = R%d = x%X\n", cpu->ir.rs2, op2);
+                            printf("  OP2 <- R[SR2] = R%d\n", cpu->ir.rs2);
                         }
                         printf("    OP2: x%X = %d\n", op2, op2);
 
                         printf("  ALU Registers:\n");
                         cpu->alu.A = cpu->reg_file[cpu->ir.rs1];
-                        printf("    A = R%d = x%X\n", cpu->ir.rs1, cpu->alu.A);
+                        printf("    A <- R%d = x%X\n", cpu->ir.rs1, cpu->alu.A);
                         cpu->alu.B = op2;
-                        printf("    B = OP2 = x%X\n", cpu->alu.B);
+                        printf("    B <- OP2 = x%X\n", cpu->alu.B);
                         break;
                     case NOT_OPCODE:
                         cpu->alu.A = cpu->reg_file[cpu->ir.rs1];
-                        printf("  ALU Reg A = R%d = x%X\n", cpu->ir.rs1, cpu->alu.A);
+                        printf("  ALU Reg A <- R%d = x%X\n", cpu->ir.rs1, cpu->alu.A);
                         break;
                     case ST_OPCODE:
                         cpu->mdr = cpu->reg_file[cpu->ir.rd];  //state 23
-                        printf("  MDR = x%X\n", cpu->mdr);
+                        printf("  MDR <- x%X\n", cpu->mdr);
                         break;
                     case LD_OPCODE:
                         cpu->mdr = memory[cpu->mar]; // state 25
-                        printf("  MDR = x%X\n", cpu->mdr);
+                        printf("  MDR <- x%X\n", cpu->mdr);
                         break;
                     case TRAP_OPCODE:
                         cpu->mdr = memory[cpu->mar];
-                        printf("  MDR = x%X\n", cpu->mdr);
+                        printf("  MDR <- x%X\n", cpu->mdr);
                         cpu->reg_file[7] = cpu->pc; // pc to reg 7
                         printf("  R7 <- PC = x%X\n", cpu->pc);
                         //state 28
@@ -155,14 +170,14 @@ int controller(CPU_p cpu) {
                         //state 30
                         break;
                     case JMP_OPCODE:
-                        cpu->pc = cpu->ir.rs1;
+                        cpu->pc = cpu->mar;
                         printf("  PC <- x%X", cpu->pc);
                         break;
                     case BR_OPCODE:
-                    printf("BEN: %d", ben);
+                    printf("  BEN: %d\n", ben);
                         if (ben) {
                             cpu->pc = cpu->pc + sext9(cpu->ir.off9); // state 22
-                            printf("  PC <- x%X", cpu->pc);
+                            printf("    PC <- PC + SEXT(PCoffset9) = x%X", cpu->pc);
                         }
                         break;
                     // do what the opcode is for, e.g. ADD
@@ -209,7 +224,7 @@ int controller(CPU_p cpu) {
 
                 printf("IR: x%X\n", cpu->ir.ir);
 
-                printf("PC: x%X = %d\n", cpu->pc, cpu->pc);
+                printf("PC: x%X\n", cpu->pc, cpu->pc);
 
                 return 0;
 
@@ -229,7 +244,10 @@ int main(int argc, char* argv[]) {
     }
 
 	memory[0] = strtol(argv[1], &temp, 16);
-    // trap vectors dummy values
+    // LD values
+    memory[3] = 0xABCD;
+    memory[5] = 0x2B;
+    // TRAP vectors dummy values
     memory[0x10] = 0xF0F0;
     memory[0x15] = 0x0F0F;
 
@@ -239,8 +257,8 @@ int main(int argc, char* argv[]) {
     // initialize registers with data for testing
     cpu->reg_file[0] = 0xF;
     cpu->reg_file[1] = 0x1D;
-    cpu->reg_file[2] = 0x0;
-    cpu->reg_file[3] = 0xAA;
+    cpu->reg_file[2] = 0xAA;
+    cpu->reg_file[3] = 0x0;
 
     controller(cpu);
 }
