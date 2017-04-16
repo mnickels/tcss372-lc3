@@ -1,0 +1,886 @@
+Mike Nickels and Carter Odem
+TCSS 372 Spring 2017
+
+HW2 results
+
+
+
+ADD R4,R1,R1
+>a.exe 1841
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x1841
+  IR  <- x1841
+
+DECODE
+  IR fields:
+    opcode = x1 (ADD)
+    DR = x4
+    SR1 = x1
+    SR2 = x1
+    immed5 = x1
+    PCoffset9 = x41
+    trapvect8 = x41
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+  OP2 <- R[SR2] = R1
+    OP2: x1D = 29
+  ALU Registers:
+    A <- R1 = x1D
+    B <- OP2 = x1D
+
+EXECUTE
+  x1D + x1D = x3A    (29 + 29 = 58)
+STORE
+  R4 <- x3A
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x3A
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x1841
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x1841
+PC: x1
+
+
+
+ADD R0,R1,R2
+>a.exe 1042
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x1042
+  IR  <- x1042
+
+DECODE
+  IR fields:
+    opcode = x1 (ADD)
+    DR = x0
+    SR1 = x1
+    SR2 = x2
+    immed5 = x2
+    PCoffset9 = x42
+    trapvect8 = x42
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+  OP2 <- R[SR2] = R2
+    OP2: xAA = 170
+  ALU Registers:
+    A <- R1 = x1D
+    B <- OP2 = xAA
+
+EXECUTE
+  x1D + xAA = xC7    (29 + 170 = 199)
+STORE
+  R0 <- xC7
+
+Register File:
+  R0 = xC7
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x1042
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x1042
+PC: x1
+
+
+
+AND R0,R1,R2
+>a.exe 5042
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x5042
+  IR  <- x5042
+
+DECODE
+  IR fields:
+    opcode = x5 (AND)
+    DR = x0
+    SR1 = x1
+    SR2 = x2
+    immed5 = x2
+    PCoffset9 = x42
+    trapvect8 = x42
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+  OP2 <- R[SR2] = R2
+    OP2: xAA = 170
+  ALU Registers:
+    A <- R1 = x1D
+    B <- OP2 = xAA
+
+EXECUTE
+  x1D & xAA = x8    (29 & 170 = 8)
+STORE
+  R0 <- x8
+
+Register File:
+  R0 = x8
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x5042
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x5042
+PC: x1
+
+
+
+AND R5,R3,R2
+>a.exe 5AC2
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x5AC2
+  IR  <- x5AC2
+
+DECODE
+  IR fields:
+    opcode = x5 (AND)
+    DR = x5
+    SR1 = x3
+    SR2 = x2
+    immed5 = x2
+    PCoffset9 = xC2
+    trapvect8 = xC2
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+  OP2 <- R[SR2] = R2
+    OP2: xAA = 170
+  ALU Registers:
+    A <- R3 = x0
+    B <- OP2 = xAA
+
+EXECUTE
+  x0 & xAA = x0    (0 & 170 = 0)
+STORE
+  R5 <- x0
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x5AC2
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x5AC2
+PC: x1
+
+
+
+NOT R0,R0
+>a.exe 903F
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x903F
+  IR  <- x903F
+
+DECODE
+  IR fields:
+    opcode = x9 (NOT)
+    DR = x0
+    SR1 = x0
+    SR2 = x7
+    immed5 = x1F
+    PCoffset9 = x3F
+    trapvect8 = x3F
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+  ALU Reg A <- R0 = xF
+
+EXECUTE
+  NOT xF = xFFF0    (NOT 15 = 65520)
+STORE
+  R0 <- xFFF0
+
+Register File:
+  R0 = xFFF0
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x903F
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x903F
+PC: x1
+
+
+
+NOT R4,R3
+>a.exe 98FF
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x98FF
+  IR  <- x98FF
+
+DECODE
+  IR fields:
+    opcode = x9 (NOT)
+    DR = x4
+    SR1 = x3
+    SR2 = x7
+    immed5 = x1F
+    PCoffset9 = xFF
+    trapvect8 = xFF
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+  ALU Reg A <- R3 = x0
+
+EXECUTE
+  NOT x0 = xFFFF    (NOT 0 = 65535)
+STORE
+  R4 <- xFFFF
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = xFFFF
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x98FF
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x98FF
+PC: x1
+
+
+
+TRAP  0x10
+>a.exe F010
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- xF010
+  IR  <- xF010
+
+DECODE
+  IR fields:
+    opcode = xF (TRAP)
+    DR = x0
+    SR1 = x0
+    SR2 = x0
+    immed5 = x10
+    PCoffset9 = x10
+    trapvect8 = x10
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- ZEXT(trapvect8) = x10
+
+FETCH OPERANDS
+  MDR <- xF0F0
+  R7 <- PC = x1
+
+EXECUTE
+  PC <- xF0F0
+STORE
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x1
+Memory[0:7]:
+  M[0] = xF010
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: xF010
+PC: xF0F0
+
+
+
+TRAP  0x15
+>a.exe F015
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- xF015
+  IR  <- xF015
+
+DECODE
+  IR fields:
+    opcode = xF (TRAP)
+    DR = x0
+    SR1 = x0
+    SR2 = x5
+    immed5 = x15
+    PCoffset9 = x15
+    trapvect8 = x15
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- ZEXT(trapvect8) = x15
+
+FETCH OPERANDS
+  MDR <- xF0F
+  R7 <- PC = x1
+
+EXECUTE
+  PC <- xF0F
+STORE
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x1
+Memory[0:7]:
+  M[0] = xF015
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: xF015
+PC: xF0F
+
+
+
+LD  R4,0x2
+>a.exe 2802
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x2802
+  IR  <- x2802
+
+DECODE
+  IR fields:
+    opcode = x2 (LD)
+    DR = x4
+    SR1 = x0
+    SR2 = x2
+    immed5 = x2
+    PCoffset9 = x2
+    trapvect8 = x2
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- PC + SEXT(PCoffset9) = x3
+
+FETCH OPERANDS
+  MDR <- xABCD
+
+EXECUTE
+
+STORE
+  R4 <- xABCD
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = xABCD
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x2802
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x2802
+PC: x1
+
+
+
+LD  R5,0x4
+>a.exe 2A04
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x2A04
+  IR  <- x2A04
+
+DECODE
+  IR fields:
+    opcode = x2 (LD)
+    DR = x5
+    SR1 = x0
+    SR2 = x4
+    immed5 = x4
+    PCoffset9 = x4
+    trapvect8 = x4
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- PC + SEXT(PCoffset9) = x5
+
+FETCH OPERANDS
+  MDR <- x2B
+
+EXECUTE
+
+STORE
+  R5 <- x2B
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x2B
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x2A04
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x2A04
+PC: x1
+
+
+
+ST  R0,0x3
+>a.exe 3003
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x3003
+  IR  <- x3003
+
+DECODE
+  IR fields:
+    opcode = x3 (ST)
+    DR = x0
+    SR1 = x0
+    SR2 = x3
+    immed5 = x3
+    PCoffset9 = x3
+    trapvect8 = x3
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- PC + SEXT(PCoffset9) = x4
+
+FETCH OPERANDS
+  MDR <- xF
+
+EXECUTE
+
+STORE
+  M[4] <- xF
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x3003
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = xF
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: x3003
+PC: x1
+
+
+
+ST  R2,0x5
+>a.exe 3405
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- x3405
+  IR  <- x3405
+
+DECODE
+  IR fields:
+    opcode = x3 (ST)
+    DR = x2
+    SR1 = x0
+    SR2 = x5
+    immed5 = x5
+    PCoffset9 = x5
+    trapvect8 = x5
+  Branch ENabled = 1
+
+EVALUATE ADDRESS
+  MAR <- PC + SEXT(PCoffset9) = x6
+
+FETCH OPERANDS
+  MDR <- xAA
+
+EXECUTE
+
+STORE
+  M[6] <- xAA
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = x3405
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = xAA
+  M[7] = x0
+IR: x3405
+PC: x1
+
+
+
+JMP R0
+>a.exe C000
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- xC000
+  IR  <- xC000
+
+DECODE
+  IR fields:
+    opcode = xC (JMP)
+    DR = x0
+    SR1 = x0
+    SR2 = x0
+    immed5 = x0
+    PCoffset9 = x0
+    trapvect8 = x0
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- R0 = xF
+
+FETCH OPERANDS
+
+EXECUTE
+  PC <- xF
+STORE
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = xC000
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: xC000
+PC: xF
+
+
+
+JMP R1
+>a.exe C040
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- xC040
+  IR  <- xC040
+
+DECODE
+  IR fields:
+    opcode = xC (JMP)
+    DR = x0
+    SR1 = x1
+    SR2 = x0
+    immed5 = x0
+    PCoffset9 = x40
+    trapvect8 = x40
+  Branch ENabled = 0
+
+EVALUATE ADDRESS
+  MAR <- R1 = x1D
+
+FETCH OPERANDS
+
+EXECUTE
+  PC <- x1D
+STORE
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = xC040
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: xC040
+PC: x1D
+
+
+
+BR  0x2
+>a.exe 0E02
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- xE02
+  IR  <- xE02
+
+DECODE
+  IR fields:
+    opcode = x0 (BR)
+    DR = x7
+    SR1 = x0
+    SR2 = x2
+    immed5 = x2
+    PCoffset9 = x2
+    trapvect8 = x2
+  Branch ENabled = 1
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+
+EXECUTE
+  BEN: 1
+    PC <- PC + SEXT(PCoffset9) = x3
+STORE
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = xE02
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: xE02
+PC: x3
+
+
+
+BRnzp #-1
+>a.exe 0FFF
+
+
+FETCH
+  MAR <- x0
+  PC  <- x1
+  MDR <- xFFF
+  IR  <- xFFF
+
+DECODE
+  IR fields:
+    opcode = x0 (BR)
+    DR = x7
+    SR1 = x7
+    SR2 = x7
+    immed5 = x1F
+    PCoffset9 = x1FF
+    trapvect8 = xFF
+  Branch ENabled = 1
+
+EVALUATE ADDRESS
+
+FETCH OPERANDS
+
+EXECUTE
+  BEN: 1
+    PC <- PC + SEXT(PCoffset9) = x0
+STORE
+
+Register File:
+  R0 = xF
+  R1 = x1D
+  R2 = xAA
+  R3 = x0
+  R4 = x0
+  R5 = x0
+  R6 = x0
+  R7 = x0
+Memory[0:7]:
+  M[0] = xFFF
+  M[1] = x0
+  M[2] = x0
+  M[3] = xABCD
+  M[4] = x0
+  M[5] = x2B
+  M[6] = x0
+  M[7] = x0
+IR: xFFF
+PC: x0
