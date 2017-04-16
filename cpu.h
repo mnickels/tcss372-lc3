@@ -1,7 +1,7 @@
 /*
  * for TCSS 372 Spring 2017
  *
- * by Mike Nickels and Carter
+ * by Mike Nickels and Carter Odem
  *
  * cpu.h
  * Header file for cpu.c
